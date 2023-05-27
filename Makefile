@@ -8,3 +8,6 @@ SHELL := /bin/bash
 # Ed: 0xa988b1866EaBF72B4c53b592c97aAD8e4b9bDCC0
 # Miner1: 0xFef311483Cc040e1A89fb9bb469eeB8A70935EF8
 # Miner2: 0xb8Ee4c7ac4ca3269fEc242780D7D960bd6272a61
+
+run:
+	go run app/scratch/main.go
