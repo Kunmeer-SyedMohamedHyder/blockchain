@@ -66,7 +66,7 @@ func run() error {
 	//=======================================================================================
 
 	tx = Tx{
-		FromID: "Bill",
+		FromID: "0xF01813E4B85e178A83e29B8E7bF26BD830a25f32",
 		ToID:   "Hyder",
 		Value:  10,
 	}
@@ -101,7 +101,7 @@ func run() error {
 	//=======================================================================================
 
 	tx3 := Tx{
-		FromID: "Syed",
+		FromID: "0xF01813E4B85e178A83e29B8E7bF26BD830a25f32",
 		ToID:   "Asna",
 		Value:  99,
 	}
@@ -126,8 +126,9 @@ func run() error {
 
 	// some attacker got in middle and this data was changed
 	// because this is the data that will be passed over the network.
+	// Hence always pass FromID as the pubKey ID to validate it.
 	tx3 = Tx{
-		FromID: "Syed",
+		FromID: "0xF01813E4B85e178A83e29B8E7bF26BD830a25f32",
 		ToID:   "Rasna",
 		Value:  99,
 	}
@@ -145,7 +146,13 @@ func run() error {
 		return fmt.Errorf("unable to pub: %w", err)
 	}
 
-	fmt.Println("PUB:", crypto.PubkeyToAddress(*publicKey3).String())
+	pubID := crypto.PubkeyToAddress(*publicKey3).String()
+
+	fmt.Println("PUB:", pubID)
+
+	if pubID != tx.FromID {
+		return fmt.Errorf("publickey ID mismatch")
+	}
 
 	return nil
 }
