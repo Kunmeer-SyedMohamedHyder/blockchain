@@ -98,5 +98,54 @@ func run() error {
 
 	fmt.Println("PUB:", crypto.PubkeyToAddress(*publicKey2).String())
 
+	//=======================================================================================
+
+	tx3 := Tx{
+		FromID: "Syed",
+		ToID:   "Asna",
+		Value:  99,
+	}
+
+	data3, err := json.Marshal(tx3)
+	if err != nil {
+		return fmt.Errorf("unable to marshal: %w", err)
+	}
+
+	v3 := crypto.Keccak256(data3)
+
+	// Sign the hash with the private key to produce a signature.
+	sig3, err := crypto.Sign(v3, privateKey)
+	if err != nil {
+		return fmt.Errorf("unable to sign: %w", err)
+	}
+
+	fmt.Println("SIG:", hexutil.Encode(sig3))
+
+	//=======================================
+	// DOWN THE WIRE
+
+	// some attacker got in middle and this data was changed
+	// because this is the data that will be passed over the network.
+	tx3 = Tx{
+		FromID: "Syed",
+		ToID:   "Rasna",
+		Value:  99,
+	}
+
+	data3, err = json.Marshal(tx3)
+	if err != nil {
+		return fmt.Errorf("unable to marshal: %w", err)
+	}
+
+	v3 = crypto.Keccak256(data3)
+
+	// the pubKey changes and hence we will be writing to some unkown person's ID.
+	publicKey3, err := crypto.SigToPub(v3, sig3)
+	if err != nil {
+		return fmt.Errorf("unable to pub: %w", err)
+	}
+
+	fmt.Println("PUB:", crypto.PubkeyToAddress(*publicKey3).String())
+
 	return nil
 }
