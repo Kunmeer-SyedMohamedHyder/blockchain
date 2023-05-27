@@ -25,15 +25,15 @@ type Tx struct {
 
 func run() error {
 
+	privateKey, err := crypto.LoadECDSA("zblock/accounts/kennedy.ecdsa")
+	if err != nil {
+		return fmt.Errorf("unable to load private key: %w", err)
+	}
+
 	tx := Tx{
 		FromID: "Bill",
 		ToID:   "Syed",
 		Value:  1000,
-	}
-
-	privateKey, err := crypto.LoadECDSA("zblock/accounts/kennedy.ecdsa")
-	if err != nil {
-		return fmt.Errorf("unable to load private key: %w", err)
 	}
 
 	data, err := json.Marshal(tx)
@@ -51,16 +51,52 @@ func run() error {
 
 	fmt.Println("SIG:", hexutil.Encode(sig))
 
-	//=======================================================================================
+	//======================================
 	// DOWN THE WIRE
 
 	// see if the v has changed, the public key received from the signature will also change.
+	// i.e if v passed here and that when we used to sign is different then only pub key will be different.
 	publicKey, err := crypto.SigToPub(v, sig)
 	if err != nil {
 		return fmt.Errorf("unable to pub: %w", err)
 	}
 
 	fmt.Println("PUB:", crypto.PubkeyToAddress(*publicKey).String())
+
+	//=======================================================================================
+
+	tx = Tx{
+		FromID: "Bill",
+		ToID:   "Hyder",
+		Value:  10,
+	}
+
+	data2, err := json.Marshal(tx)
+	if err != nil {
+		return fmt.Errorf("unable to marshal: %w", err)
+	}
+
+	v2 := crypto.Keccak256(data2)
+
+	// Sign the hash with the private key to produce a signature.
+	sig2, err := crypto.Sign(v2, privateKey)
+	if err != nil {
+		return fmt.Errorf("unable to sign: %w", err)
+	}
+
+	fmt.Println("SIG:", hexutil.Encode(sig2))
+
+	//=======================================
+	// DOWN THE WIRE
+
+	// even after the v changed pub key remains the same as we use the same private key to sign the v
+	// and the v passed to create the signature and to get the pubKey is same.
+	publicKey2, err := crypto.SigToPub(v2, sig2)
+	if err != nil {
+		return fmt.Errorf("unable to pub: %w", err)
+	}
+
+	fmt.Println("PUB:", crypto.PubkeyToAddress(*publicKey2).String())
 
 	return nil
 }
