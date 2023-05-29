@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/big"
 
+	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/blockchain/database"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )
@@ -129,7 +132,7 @@ func run() error {
 	// Hence always pass FromID as the pubKey ID to validate it.
 	tx3 = Tx{
 		FromID: "0xF01813E4B85e178A83e29B8E7bF26BD830a25f32",
-		ToID:   "Rasna",
+		ToID:   "Asna",
 		Value:  99,
 	}
 
@@ -154,5 +157,49 @@ func run() error {
 		return fmt.Errorf("publickey ID mismatch")
 	}
 
+	vv, r, s, err := ToVRSFromHexSignature(hexutil.Encode(sig3))
+	if err != nil {
+		return fmt.Errorf("unable to vrs (%v): %w", hexutil.Encode(sig3), err)
+	}
+
+	fmt.Println("V|R|S", vv, r, s)
+
+	//=======================================================================================
+
+	newTx, err := database.NewTx(
+		1,
+		1,
+		"0xF01813E4B85e178A83e29B8E7bF26BD830a25f32",
+		"0xF01813E4B85e178A83e29B8E7bF26BD830a25f32",
+		100,
+		0,
+		nil)
+	if err != nil {
+		return fmt.Errorf("unable to initialize a newTx: %w", err)
+	}
+
+	signedTx, err := newTx.Sign(privateKey)
+	if err != nil {
+		return fmt.Errorf("unable to sign a transaction: %w", err)
+	}
+
+	fmt.Println("======================")
+	fmt.Printf("signedTx: %#v", signedTx)
+
 	return nil
+}
+
+// ToVRSFromHexSignature converts a hex representation of the signature into
+// its R, S and V parts.
+func ToVRSFromHexSignature(sigStr string) (v, r, s *big.Int, err error) {
+	sig, err := hex.DecodeString(sigStr[2:])
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	r = big.NewInt(0).SetBytes(sig[:32])
+	s = big.NewInt(0).SetBytes(sig[32:64])
+	v = big.NewInt(0).SetBytes([]byte{sig[64]})
+
+	return v, r, s, nil
 }
