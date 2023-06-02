@@ -8,6 +8,28 @@ SHELL := /bin/bash
 # Ed: 0xa988b1866EaBF72B4c53b592c97aAD8e4b9bDCC0
 # Miner1: 0xFef311483Cc040e1A89fb9bb469eeB8A70935EF8
 # Miner2: 0xb8Ee4c7ac4ca3269fEc242780D7D960bd6272a61
+#
+# Run two miners
+# make up
+# make up2
+#
+# Wallet Stuff
+# go run app/wallet/cli/main.go generate
+#
+# Sample calls
+# curl -il -X GET http://localhost:8080/v1/sample
+# curl -il -X GET http://localhost:9080/v1/node/sample
+#
 
-run:
+# ==============================================================================
+# Local support
+
+scratch:
 	go run app/scratch/main.go
+
+up:
+	go run app/services/node/main.go -race | go run app/tooling/logfmt/main.go
+
+tidy:
+	go mod tidy
+	go mod vendor
