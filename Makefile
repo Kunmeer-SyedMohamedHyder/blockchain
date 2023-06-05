@@ -13,13 +13,18 @@ SHELL := /bin/bash
 # make up
 # make up2
 #
+# Bookeeping transactions
+# curl -il -X GET http://localhost:8080/v1/genesis/list
+# curl -il -X GET http://localhost:9080/v1/node/status
+# curl -il -X GET http://localhost:8080/v1/accounts/list
+# curl -il -X GET http://localhost:8080/v1/tx/uncommitted/list
+# curl -il -X GET http://localhost:8080/v1/blocks/list
+# curl -il -X GET http://localhost:9080/v1/node/block/list/1/latest
+#
 # Wallet Stuff
 # go run app/wallet/cli/main.go generate
-#
-# Sample calls
-# curl -il -X GET http://localhost:8080/v1/sample
-# curl -il -X GET http://localhost:9080/v1/node/sample
-#
+# go run app/wallet/cli/main.go account -a kennedy
+# go run app/wallet/cli/main.go balance -a kennedy
 
 # ==============================================================================
 # Local support
