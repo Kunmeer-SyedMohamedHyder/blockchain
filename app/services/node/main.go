@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"expvar"
 	"fmt"
 	"net/http"
 	"os"
@@ -109,6 +110,8 @@ func run(log *zap.SugaredLogger) error {
 	}
 	log.Infow("startup", "config", out)
 
+	expvar.NewString("build").Set(build)
+
 	// =========================================================================
 	// Blockchain Support
 
@@ -136,8 +139,9 @@ func run(log *zap.SugaredLogger) error {
 	// The state value represents the blockchain node and manages the blockchain
 	// database and provides an API for application support.
 	state, err := state.New(state.Config{
-		BeneficiaryID: database.PublicKeyToAccountID(privateKey.PublicKey),
-		Genesis:       genesis,
+		BeneficiaryID:  database.PublicKeyToAccountID(privateKey.PublicKey),
+		Genesis:        genesis,
+		SelectStrategy: cfg.State.SelectStrategy,
 
 		EvHandler: ev,
 	})
@@ -186,6 +190,7 @@ func run(log *zap.SugaredLogger) error {
 	publicMux := handlers.PublicMux(handlers.MuxConfig{
 		Shutdown: shutdown,
 		Log:      log,
+		State:    state,
 	})
 
 	// Construct a server to service the requests against the mux.
