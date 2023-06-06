@@ -112,16 +112,5 @@ func (h Handlers) Accounts(ctx context.Context, w http.ResponseWriter, r *http.R
 		accounts = map[database.AccountID]database.Account{accountID: account}
 	}
 
-	resp := make([]act, 0)
-	for accontID, accountInfo := range accounts {
-		act := act{
-			Account: accontID,
-			Balance: accountInfo.Balance,
-			Nonce:   accountInfo.Nonce,
-		}
-
-		resp = append(resp, act)
-	}
-
-	return web.Respond(ctx, w, resp, http.StatusOK)
+	return web.Respond(ctx, w, accounts, http.StatusOK)
 }

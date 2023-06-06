@@ -2,13 +2,6 @@ package public
 
 import "github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/blockchain/database"
 
-type act struct {
-	Account database.AccountID `json:"account"`
-	Name    string             `json:"name"`
-	Balance uint64             `json:"balance"`
-	Nonce   uint64             `json:"nonce"`
-}
-
 type tx struct {
 	FromAccount database.AccountID `json:"from"`
 	FromName    string             `json:"from_name"`
