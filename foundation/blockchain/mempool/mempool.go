@@ -70,7 +70,7 @@ func (mp *Mempool) Upsert(tx database.BlockTx) error {
 	// from this sort of behavior.
 	if etx, exists := mp.pool[key]; exists {
 		if tx.Tip < uint64(math.Round(float64(etx.Tip)*1.10)) {
-			return errors.New("replacing a transaction requires a 10% bump in the tip")
+			return errors.New("replacing a transaction requires a 10%% bump in the tip")
 		}
 	}
 
