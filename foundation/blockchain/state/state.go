@@ -99,3 +99,10 @@ func (s *State) Mempool() []database.BlockTx {
 func (s *State) UpsertMempool(tx database.BlockTx) error {
 	return s.mempool.Upsert(tx)
 }
+
+// =============================================================================
+
+// Accounts returns a copy of the database accounts.
+func (s *State) Accounts() map[database.AccountID]database.Account {
+	return s.db.Copy()
+}
