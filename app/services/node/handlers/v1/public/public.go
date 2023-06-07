@@ -9,6 +9,7 @@ import (
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/business/sys/validate"
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/blockchain/database"
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/blockchain/state"
+	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/nameservice"
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/web"
 	"go.uber.org/zap"
 )
@@ -17,6 +18,7 @@ import (
 type Handlers struct {
 	Log   *zap.SugaredLogger
 	State *state.State
+	NS    *nameservice.NameService
 }
 
 // SubmitWalletTransaction adds new transactions to the mempool.
@@ -74,7 +76,9 @@ func (h Handlers) Mempool(ctx context.Context, w http.ResponseWriter, r *http.Re
 
 		trans = append(trans, tx{
 			FromAccount: tran.FromID,
+			FromName:    h.NS.Lookup(tran.FromID),
 			To:          tran.ToID,
+			ToName:      h.NS.Lookup(tran.ToID),
 			ChainID:     tran.ChainID,
 			Nonce:       tran.Nonce,
 			Value:       tran.Value,

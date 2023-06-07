@@ -8,6 +8,7 @@ import (
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/app/services/node/handlers/v1/private"
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/app/services/node/handlers/v1/public"
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/blockchain/state"
+	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/nameservice"
 	"github.com/Kunmeer-SyedMohamedHyder/blockchain/foundation/web"
 	"go.uber.org/zap"
 )
@@ -17,6 +18,7 @@ const version = "v1"
 // Config contains all the mandatory systems required by handlers.
 type Config struct {
 	Log   *zap.SugaredLogger
+	NS    *nameservice.NameService
 	State *state.State
 }
 
@@ -24,6 +26,7 @@ type Config struct {
 func PublicRoutes(app *web.App, cfg Config) {
 	pbl := public.Handlers{
 		Log:   cfg.Log,
+		NS:    cfg.NS,
 		State: cfg.State,
 	}
 
